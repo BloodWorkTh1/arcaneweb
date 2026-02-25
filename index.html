@@ -221,27 +221,16 @@
         </div>
         </header>
 
+        <!-- Hyvor Talk Embed -->
         <div id="hyvor-talk-view"></div>
-        
         <script>
-        (function() {
-          var s = document.createElement("script");
-          s.src = "https://talk.hyvor.com/web-api/embed";
-          s.async = true;
-          s.onload = function() {
-            // Jetzt wird HyvorTalk garantiert definiert sein
-            if (window.HyvorTalk) {
-              HyvorTalk.config({
-                websiteId: 15074,  // Deine Website ID
-                pageId: window.location.pathname,
-                pageUrl: window.location.href
-              });
-            } else {
-              console.error("HyvorTalk konnte nicht geladen werden!");
-            }
-          };
-          document.body.appendChild(s);
-        })();
+          var HYVOR_TALK_WEBSITE = 15074; // <--- DEINE Website ID
+          (function() {
+            var s = document.createElement("script");
+            s.src = "https://talk.hyvor.com/web-api/embed";
+            s.async = true;
+            document.body.appendChild(s);
+          })();
         </script>
 
     <script>
