@@ -221,17 +221,105 @@
         </div>
         </header>
 
+        <!-- BraveNet Embed -->
+        <script src="https://apps.bravenet.com/go.js?service=forum;id=1;usernum=3676180544" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Besucher-Anzeige -->
+        <div id="online-counter" style="
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:6px 12px;
+            background:#222;
+            border-radius:6px;
+            font-family:'Orbitron',sans-serif;
+            font-weight:600;
+            font-size:1rem;
+            color:#e0f7ff;
+        ">
+            <span id="online-count">1</span> ONLINE
+            <span style="
+                display:inline-block;
+                width:10px;
+                height:10px;
+                background:#0f0;
+                border-radius:50%;
+                box-shadow:0 0 6px #0f0;
+            "></span>
+        </div>
+
         <!-- Hyvor Talk Embed -->
         <div id="hyvor-talk-view"></div>
         <script>
-          var HYVOR_TALK_WEBSITE = 15074; // <--- DEINE Website ID
-          (function() {
+        var HYVOR_TALK_WEBSITE = 15074; // <--- DEINE Website ID
+        (function() {
             var s = document.createElement("script");
             s.src = "https://talk.hyvor.com/web-api/embed";
             s.async = true;
             document.body.appendChild(s);
-          })();
+        })();
         </script>
+
+        <footer>
+            © 2018 Arcane Phoenix Clan · Dein Abenteuer beginnt jetzt
+        </footer>
+    </div>
+
+<script>
+(function(){
+    const KEY = "activeTabs";
+    const TIMEOUT = 15000; // 15 Sekunden Inaktivität
+
+    // ID für diesen Tab: wiederverwenden, falls Reload
+    let tabId = sessionStorage.getItem("tabId");
+    if (!tabId) {
+        tabId = Math.random().toString(36).substr(2,8);
+        sessionStorage.setItem("tabId", tabId);
+    }
+
+    function getTabs() {
+        const now = Date.now();
+        let tabs = JSON.parse(localStorage.getItem(KEY) || "{}");
+
+        // Alte / inaktive Tabs entfernen
+        for (let id in tabs) {
+            if (now - tabs[id] > TIMEOUT) delete tabs[id];
+        }
+
+        // Speichern
+        localStorage.setItem(KEY, JSON.stringify(tabs));
+        return tabs;
+    }
+
+    function updateCounter() {
+        const tabs = getTabs();
+        document.getElementById("online-count").innerText = Object.keys(tabs).length;
+    }
+
+    // initial add this tab
+    function keepAlive() {
+        const tabs = getTabs();
+        tabs[tabId] = Date.now();
+        localStorage.setItem(KEY, JSON.stringify(tabs));
+        updateCounter();
+    }
+
+    // Keep alive alle 5 Sekunden
+    const interval = setInterval(keepAlive, 5000);
+    keepAlive();
+
+    // Entferne Tab beim schließen
+    window.addEventListener("beforeunload", ()=>{
+        const tabs = JSON.parse(localStorage.getItem(KEY) || "{}");
+        delete tabs[tabId];
+        localStorage.setItem(KEY, JSON.stringify(tabs));
+        clearInterval(interval);
+    });
+
+    // Reagiere auf Änderungen in localStorage (andere Tabs)
+    window.addEventListener("storage", updateCounter);
+})();
+</script>
 
     <script>
         const sidebar = document.getElementById('sidebar');
