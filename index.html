@@ -246,7 +246,7 @@
                 border-radius:50%;
                 box-shadow:0 0 6px #0f0;
             "></span>
-        </div>
+        </div>    
 
         <!-- Hyvor Talk Embed -->
         <div id="hyvor-talk-view"></div>
@@ -270,54 +270,55 @@
     const KEY = "activeTabs";
     const TIMEOUT = 15000; // 15 Sekunden Inaktivität
 
-    // ID für diesen Tab: wiederverwenden, falls Reload
+    // Tab-ID wiederverwenden
     let tabId = sessionStorage.getItem("tabId");
-    if (!tabId) {
+    if(!tabId){
         tabId = Math.random().toString(36).substr(2,8);
         sessionStorage.setItem("tabId", tabId);
     }
 
-    function getTabs() {
+    // Lokale Session tracken
+    function updateTabs(){
         const now = Date.now();
-        let tabs = JSON.parse(localStorage.getItem(KEY) || "{}");
-
-        // Alte / inaktive Tabs entfernen
-        for (let id in tabs) {
-            if (now - tabs[id] > TIMEOUT) delete tabs[id];
+        let tabs = JSON.parse(localStorage.getItem(KEY)||"{}");
+        tabs[tabId] = now;
+        for(let id in tabs){
+            if(now - tabs[id] > TIMEOUT) delete tabs[id];
         }
-
-        // Speichern
         localStorage.setItem(KEY, JSON.stringify(tabs));
-        return tabs;
+        return Object.keys(tabs).length;
     }
 
-    function updateCounter() {
-        const tabs = getTabs();
-        document.getElementById("online-count").innerText = Object.keys(tabs).length;
-    }
+    // Hit von CountAPI hochzählen
+    const countKey = "dein-key"; // replace mit deinem Mileshilliard Key
+    fetch(`https://countapi.mileshilliard.com/hit/${countKey}`)
+        .then(res => res.json())
+        .then(data => {
+            const active = updateTabs();
+            // Korrektur: globale Hits minus inaktive Tabs
+            let online = Math.max(data.value - (data.value - active), 1); 
+            document.getElementById("online-count").innerText = online;
+        });
 
-    // initial add this tab
-    function keepAlive() {
-        const tabs = getTabs();
-        tabs[tabId] = Date.now();
-        localStorage.setItem(KEY, JSON.stringify(tabs));
-        updateCounter();
-    }
+    // Keep alive und counter aktualisieren alle 5 Sekunden
+    setInterval(()=>{
+        const active = updateTabs();
+        // Ziehe nur die Anzahl aktiver Tabs für grobe Schätzung ab
+        fetch(`https://countapi.mileshilliard.com/get/${countKey}`)
+            .then(res => res.json())
+            .then(data => {
+                let online = Math.max(data.value - (data.value - active), 1);
+                document.getElementById("online-count").innerText = online;
+            });
+    },5000);
 
-    // Keep alive alle 5 Sekunden
-    const interval = setInterval(keepAlive, 5000);
-    keepAlive();
-
-    // Entferne Tab beim schließen
+    // Beim Tab schließen entfernen
     window.addEventListener("beforeunload", ()=>{
-        const tabs = JSON.parse(localStorage.getItem(KEY) || "{}");
+        let tabs = JSON.parse(localStorage.getItem(KEY)||"{}");
         delete tabs[tabId];
         localStorage.setItem(KEY, JSON.stringify(tabs));
-        clearInterval(interval);
     });
 
-    // Reagiere auf Änderungen in localStorage (andere Tabs)
-    window.addEventListener("storage", updateCounter);
 })();
 </script>
 
