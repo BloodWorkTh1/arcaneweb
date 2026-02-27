@@ -267,58 +267,57 @@
 
 <script>
 (function(){
-    const KEY = "activeTabs";
+    const LOCAL_KEY = "activeTabs";
     const TIMEOUT = 15000; // 15 Sekunden Inaktivität
+    const COUNTAPI_KEY = "arcane-phoenix-online"; // dein Mileshilliard Key
 
-    // Tab-ID wiederverwenden
+    // Tab-ID wiederverwenden oder neu generieren
     let tabId = sessionStorage.getItem("tabId");
     if(!tabId){
         tabId = Math.random().toString(36).substr(2,8);
         sessionStorage.setItem("tabId", tabId);
     }
 
-    // Lokale Session tracken
+    // Lokale aktive Tabs tracken
     function updateTabs(){
         const now = Date.now();
-        let tabs = JSON.parse(localStorage.getItem(KEY)||"{}");
+        let tabs = JSON.parse(localStorage.getItem(LOCAL_KEY)||"{}");
         tabs[tabId] = now;
         for(let id in tabs){
             if(now - tabs[id] > TIMEOUT) delete tabs[id];
         }
-        localStorage.setItem(KEY, JSON.stringify(tabs));
+        localStorage.setItem(LOCAL_KEY, JSON.stringify(tabs));
         return Object.keys(tabs).length;
     }
 
-    // Hit von CountAPI hochzählen
-    const countKey = "dein-key"; // replace mit deinem Mileshilliard Key
-    fetch(`https://countapi.mileshilliard.com/hit/${countKey}`)
-        .then(res => res.json())
-        .then(data => {
-            const active = updateTabs();
-            // Korrektur: globale Hits minus inaktive Tabs
-            let online = Math.max(data.value - (data.value - active), 1); 
-            document.getElementById("online-count").innerText = online;
-        });
-
-    // Keep alive und counter aktualisieren alle 5 Sekunden
-    setInterval(()=>{
-        const active = updateTabs();
-        // Ziehe nur die Anzahl aktiver Tabs für grobe Schätzung ab
-        fetch(`https://countapi.mileshilliard.com/get/${countKey}`)
+    // Zähler initial laden und anpassen
+    function updateOnlineCount(){
+        const activeTabs = updateTabs();
+        fetch(`https://countapi.mileshilliard.com/get/${COUNTAPI_KEY}`)
             .then(res => res.json())
             .then(data => {
-                let online = Math.max(data.value - (data.value - active), 1);
+                // Schätzung: globale Hits minus inaktive Tabs
+                let online = Math.max(activeTabs, 1);
                 document.getElementById("online-count").innerText = online;
             });
-    },5000);
+    }
 
-    // Beim Tab schließen entfernen
+    // Hit zählen (nur beim ersten Besuch / Laden)
+    fetch(`https://countapi.mileshilliard.com/hit/${COUNTAPI_KEY}`)
+        .then(res => res.json())
+        .then(data => {
+            updateOnlineCount();
+        });
+
+    // Keep alive + Counter alle 5 Sekunden aktualisieren
+    setInterval(updateOnlineCount, 5000);
+
+    // Beim Tab schließen aus localStorage entfernen
     window.addEventListener("beforeunload", ()=>{
-        let tabs = JSON.parse(localStorage.getItem(KEY)||"{}");
+        let tabs = JSON.parse(localStorage.getItem(LOCAL_KEY)||"{}");
         delete tabs[tabId];
-        localStorage.setItem(KEY, JSON.stringify(tabs));
+        localStorage.setItem(LOCAL_KEY, JSON.stringify(tabs));
     });
-
 })();
 </script>
 
