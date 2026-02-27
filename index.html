@@ -224,32 +224,50 @@
         <!-- BraveNet Embed -->
         <script src="https://apps.bravenet.com/go.js?service=forum;id=1;usernum=3676180544" type="text/javascript" charset="utf-8"></script>
 
-        <!-- Besucher-Anzeige -->
-        <div id="online-counter" style="
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
-            padding:6px 12px;
-            background:#222;
-            border-radius:6px;
-            font-family:'Orbitron',sans-serif;
-            font-weight:600;
-            font-size:1rem;
-            color:#e0f7ff;
-        ">
-            <!-- Hier wird der Zähler von WebCounters geladen -->
-            <span id="online-count">
-                <script language="JavaScript" src="https://www.besucherzaehler-kostenlos.de/js/counter.js.php?count=1&id=bloodworkth1.github.ioarcanewebbn-forum-1-1-367618054410779&start=0&design=6"></script>
-            </span> ONLINE
-            <span style="
-                display:inline-block;
-                width:10px;
-                height:10px;
-                background:#0f0;
-                border-radius:50%;
-                box-shadow:0 0 6px #0f0;
-            "></span>
-        </div>
+    <!-- Besucher-Anzeige im Sci-Fi Stil -->
+    <div id="online-counter" style="
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding:6px 12px;
+        background:#222;
+        border-radius:6px;
+        font-family:'Orbitron',sans-serif;
+        font-weight:600;
+        font-size:1rem;
+        color:#e0f7ff;
+    ">
+        <span id="fc-45782" style="color:#00f6ff; font-weight:bold;">Lade...</span> ONLINE
+        <span style="
+            display:inline-block;
+            width:10px;
+            height:10px;
+            background:#0f0;
+            border-radius:50%;
+            box-shadow:0 0 6px #0f0;
+        "></span>
+    </div>
+
+    <script>
+    var fcr = Math.floor(Math.random()*99999999999);
+    var _fcc = _fcc || [];
+    _fcc.push(["45782"]); 
+    _fcc.push(["blue"]);
+
+    (function(){
+        var fc = document.createElement("script");
+        fc.async = true;
+        fc.src = "https://www.imcounter.com/fcount.php?rnd=" + fcr;
+        var sc = document.getElementById("fc-45782");
+        sc.appendChild(fc);
+    })();
+    </script>
+
+    <noscript>
+    <a href="https://www.imcounter.com/stats/45782/dashboard" rel="nofollow" target="_blank" title="Free Counter">
+        <img src="https://www.imcounter.com/fcounter.php?id=45782;" alt="Free Counter" title="Free Counter">
+    </a>
+    </noscript>
 
         <!-- Hyvor Talk Embed -->
         <div id="hyvor-talk-view"></div>
