@@ -224,29 +224,37 @@
         <!-- BraveNet Embed -->
         <script src="https://apps.bravenet.com/go.js?service=forum;id=1;usernum=3676180544" type="text/javascript" charset="utf-8"></script>
 
-        <!-- Besucher-Anzeige -->
-        <div id="online-counter" style="
-            display:inline-flex;
-            align-items:center;
-            gap:6px;
-            padding:6px 12px;
-            background:#222;
-            border-radius:6px;
-            font-family:'Orbitron',sans-serif;
-            font-weight:600;
-            font-size:1rem;
-            color:#e0f7ff;
-        ">
-            <span id="online-count">1</span> ONLINE
-            <span style="
-                display:inline-block;
-                width:10px;
-                height:10px;
-                background:#0f0;
-                border-radius:50%;
-                box-shadow:0 0 6px #0f0;
-            "></span>
-        </div>    
+<!-- Besucher-Anzeige (SuperCounters) -->
+<div id="online-counter" style="
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 12px;
+    background:#222;
+    border-radius:6px;
+    font-family:'Orbitron',sans-serif;
+    font-weight:600;
+    font-size:1rem;
+    color:#e0f7ff;
+">
+    <!-- Zähler -->
+    <span id="online-count">
+        <!-- BEGIN: Powered by Supercounters.com -->
+        <script type="text/javascript" src="//widget.supercounters.com/ssl/online_i.js"></script>
+        <script type="text/javascript">
+            sc_online_i(1730816, "ffffff", "0f0"); // weißer Text, grüner Punkt
+        </script>
+        <!-- END: Powered by Supercounters.com -->
+    </span> ONLINE
+    <span style="
+        display:inline-block;
+        width:10px;
+        height:10px;
+        background:#0f0;
+        border-radius:50%;
+        box-shadow:0 0 6px #0f0;
+    "></span>
+</div>
 
         <!-- Hyvor Talk Embed -->
         <div id="hyvor-talk-view"></div>
@@ -264,62 +272,6 @@
             © 2018 Arcane Phoenix Clan · Dein Abenteuer beginnt jetzt
         </footer>
     </div>
-
-<script>
-(function(){
-    const LOCAL_KEY = "activeTabs";
-    const TIMEOUT = 15000; // 15 Sekunden Inaktivität
-    const COUNTAPI_KEY = "arcane-phoenix-online"; // dein Mileshilliard Key
-
-    // Tab-ID wiederverwenden oder neu generieren
-    let tabId = sessionStorage.getItem("tabId");
-    if(!tabId){
-        tabId = Math.random().toString(36).substr(2,8);
-        sessionStorage.setItem("tabId", tabId);
-    }
-
-    // Lokale aktive Tabs tracken
-    function updateTabs(){
-        const now = Date.now();
-        let tabs = JSON.parse(localStorage.getItem(LOCAL_KEY)||"{}");
-        tabs[tabId] = now;
-        for(let id in tabs){
-            if(now - tabs[id] > TIMEOUT) delete tabs[id];
-        }
-        localStorage.setItem(LOCAL_KEY, JSON.stringify(tabs));
-        return Object.keys(tabs).length;
-    }
-
-    // Zähler initial laden und anpassen
-    function updateOnlineCount(){
-        const activeTabs = updateTabs();
-        fetch(`https://countapi.mileshilliard.com/get/${COUNTAPI_KEY}`)
-            .then(res => res.json())
-            .then(data => {
-                // Schätzung: globale Hits minus inaktive Tabs
-                let online = Math.max(activeTabs, 1);
-                document.getElementById("online-count").innerText = online;
-            });
-    }
-
-    // Hit zählen (nur beim ersten Besuch / Laden)
-    fetch(`https://countapi.mileshilliard.com/hit/${COUNTAPI_KEY}`)
-        .then(res => res.json())
-        .then(data => {
-            updateOnlineCount();
-        });
-
-    // Keep alive + Counter alle 5 Sekunden aktualisieren
-    setInterval(updateOnlineCount, 5000);
-
-    // Beim Tab schließen aus localStorage entfernen
-    window.addEventListener("beforeunload", ()=>{
-        let tabs = JSON.parse(localStorage.getItem(LOCAL_KEY)||"{}");
-        delete tabs[tabId];
-        localStorage.setItem(LOCAL_KEY, JSON.stringify(tabs));
-    });
-})();
-</script>
 
     <script>
         const sidebar = document.getElementById('sidebar');
